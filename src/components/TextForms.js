@@ -1,25 +1,29 @@
 import React, { useState } from 'react'
-import Navbar from './Navbar'
-
 
 export default function TextForms(props) {
     const [text, setText] = useState('Enter Text Here');
     const [searchText, setSearchText] = useState('');
     const [words, setWords] = useState();
 
+
     const handleOnChange = (event) => {
         let newText = event.target.value;
+        if (newText.includes('  ')) {
+            newText = newText.trim();
+        }
         setText(newText);
     };
 
     const handleOnClick1 = () => {
         let newText = text.toUpperCase();
         setText(newText);
+        props.showAlert('Converted to Uppercase', 'success');
     };
 
     const handleOnClick2 = () => {
         let newText = text.toLowerCase();
         setText(newText);
+        props.showAlert('Converted to Lowercase', 'success');
     };
 
     const encryptmsg = () => {
@@ -36,11 +40,13 @@ export default function TextForms(props) {
             result += String.fromCharCode(charCode);
         }
         setText(result);
+        props.showAlert('Message Encrypted', 'success');
     }
 
     const clearText = () => {
         setText('');
         setSearchText('');
+        props.showAlert('Text Cleared', 'success');
     }
 
     const handleTextSearch = () => {
@@ -49,6 +55,11 @@ export default function TextForms(props) {
         let result = string.split(' ');
         result = result.includes(word);
         setWords(result);
+        if (result === true) {
+            props.showAlert('Text Found', 'success');
+        } else {
+            props.showAlert('Text Not Found', 'danger');
+        }
     }
 
     const handleTextSearchOnChange = (event) => {
@@ -63,8 +74,10 @@ export default function TextForms(props) {
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
-        alert('Text Copied');
+        props.showAlert('Text Copied', 'success');
     };
+
+
 
     return (
         <div className='container'>
@@ -83,8 +96,8 @@ export default function TextForms(props) {
             </div>
             <div className='container my-3'>
                 <h3>Text Summary</h3>
-                <p>Number of words : {text.split(" ").length}</p>
-                <p>Words Length : {text.length}</p>
+                <p>Number of words : {text?.trim() ? text.split(" ").length : 0}</p>
+                <p>Words Length : {text?.trim() ? text.length : 0}</p>
                 <p>Encrypt Text : {text}</p>
             </div>
             <div className='container' style={{ justifyContent: 'center', justifyItems: 'flex-start', display: 'inline-block' }}>
